@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Node (if any future tooling added)
+node_modules/
+
+# Output
+*.log

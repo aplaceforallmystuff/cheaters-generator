@@ -1,0 +1,21 @@
+{
+  "name": "cheaters-generator",
+  "description": "Generate personalized Claude Code cheatsheet systems inspired by Brett Terpstra's Cheaters",
+  "version": "1.0.0",
+  "author": {
+    "name": "Jim Christian",
+    "email": "hello@jimchristian.net"
+  },
+  "homepage": "https://github.com/aplaceforallmystuff/cheaters-generator",
+  "repository": "https://github.com/aplaceforallmystuff/cheaters-generator",
+  "license": "MIT",
+  "keywords": [
+    "cheatsheet",
+    "quick-reference",
+    "documentation",
+    "mcp-servers",
+    "skills",
+    "commands",
+    "productivity"
+  ]
+}

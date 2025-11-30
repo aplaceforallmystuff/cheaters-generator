@@ -1,0 +1,20 @@
+{
+  "name": "cheaters-generator",
+  "owner": {
+    "name": "Jim Christian",
+    "email": "hello@jimchristian.net"
+  },
+  "metadata": {
+    "description": "Generate personalized Claude Code cheatsheet systems inspired by Brett Terpstra's Cheaters",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "cheaters-generator",
+      "source": "./",
+      "description": "Skills and commands for generating local HTML-based quick-reference cheatsheets for your Claude Code setup",
+      "version": "1.0.0",
+      "strict": true
+    }
+  ]
+}
