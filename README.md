@@ -1,16 +1,27 @@
 # Cheaters Generator
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Claude Code](https://img.shields.io/badge/Claude_Code-Plugin-blue)](https://claude.ai/code)
+
 Generate personalized Claude Code cheatsheet systems inspired by [Brett Terpstra's Cheaters](https://github.com/ttscoff/cheaters).
+
+![Dark Mode](screenshots/dark-mode.png)
 
 ## What It Does
 
 Creates a local HTML-based quick-reference system customized to YOUR Claude Code setup:
 
-- **Dark theme interface** with keyboard navigation (j/k, arrows)
+- **Dark & light themes** with system preference detection
+- **Global search** - Press `/` to search all commands across sheets
+- **Keyboard navigation** - j/k, arrows, Enter to select
 - **Sheets for everything** - Claude commands, custom skills, plugin packs, MCP servers
 - **Auto-discovery** - Scans your actual configuration to build relevant sheets
 - **Example prompts** - Pulls demonstration phrases from MCP server READMEs
-- **LocalStorage persistence** - Remembers your last-viewed sheet
+- **LocalStorage persistence** - Remembers your last-viewed sheet and theme
+
+![Light Mode](screenshots/light-mode.png)
+
+![Search](screenshots/search.png)
 
 ## Installation
 
@@ -77,10 +88,15 @@ open ~/Dev/claude-code-cheaters/index.html
 cd ~/Dev/claude-code-cheaters && python3 -m http.server 8888
 ```
 
-### Keyboard Navigation
+### Keyboard Shortcuts
 
-- `↑` / `k` - Previous sheet
-- `↓` / `j` - Next sheet
+| Key | Action |
+|-----|--------|
+| `/` | Focus search |
+| `Esc` | Close search |
+| `↑` / `↓` | Navigate results / sheets |
+| `Enter` | Select result |
+| `k` / `j` | Previous / next sheet |
 
 ## What's Included
 
