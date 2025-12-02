@@ -13,6 +13,9 @@ A local HTML-based quick-reference system with:
 - Sheets for Claude commands, custom skills, plugin packs, and MCP servers
 - LocalStorage persistence for last-viewed sheet
 - Comprehensive documentation pulled from your actual configuration
+- **Global timestamp** in footer showing last full regeneration
+- **Per-sheet timestamps** showing when each sheet was last updated
+- **"New" badges** highlighting items added since previous generation
 
 ## Workflow
 
@@ -34,7 +37,19 @@ ls -la ~/.claude/commands/
 ls -la ~/.claude/plugins/marketplaces/
 ```
 
-### 2. Create Directory Structure
+### 2. Check Previous Generation (for "New" tracking)
+
+Before regenerating, capture existing items to compare:
+
+```javascript
+// Read existing main.js and extract item names per sheet
+// Store in previousItems = { 'sheet-id': ['item1', 'item2', ...], ... }
+// New items = current items not in previousItems[sheet]
+```
+
+If no previous generation exists, skip "New" tracking for first run.
+
+### 3. Create Directory Structure
 
 Ask user for preferred location (default: `~/Dev/claude-code-cheaters/`):
 
@@ -42,7 +57,7 @@ Ask user for preferred location (default: `~/Dev/claude-code-cheaters/`):
 mkdir -p ~/Dev/claude-code-cheaters/{stylesheets,javascripts}
 ```
 
-### 3. Generate Files
+### 4. Generate Files
 
 Create three files following the templates below.
 
@@ -79,7 +94,12 @@ Create three files following the templates below.
             <!-- Add MCP Servers section -->
             <li class="nav-section">MCP Servers</li>
             <!-- Add entries for each MCP server -->
+            <!-- Add new-dot span for sheets with new items -->
+            <!-- Example: <li><a href="#" data-sheet="mcp-new">New Server <span class="new-dot"></span></a></li> -->
         </ul>
+        <div class="nav-footer">
+            <span id="global-timestamp"></span>
+        </div>
     </nav>
 
     <main id="content">
@@ -286,6 +306,46 @@ body {
 .tag-custom { background: rgba(139, 92, 246, 0.2); color: var(--accent); }
 .tag-plugin { background: rgba(34, 197, 94, 0.2); color: var(--success); }
 .tag-mcp { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+.tag-new { background: var(--success); color: #000; font-weight: 600; }
+
+/* New item indicator dot in sidebar */
+.new-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: var(--success);
+    border-radius: 50%;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+
+/* Sidebar footer for global timestamp */
+.nav-footer {
+    padding: 12px 20px;
+    border-top: 1px solid var(--border);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: auto;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-sidebar);
+}
+
+/* Adjust sidebar for footer */
+#sidebar {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 50px;
+}
+
+/* Per-sheet timestamp */
+.sheet-timestamp {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: normal;
+}
 
 /* Code blocks */
 code {
@@ -394,6 +454,16 @@ kbd {
 ```javascript
 // Claude Code Cheatsheet - Navigation & Content Loading
 
+// Global generation timestamp (set at generation time)
+const generatedAt = '2025-12-02T14:45:00';  // ISO format
+
+// Per-sheet metadata for timestamps and new item tracking
+const sheetMeta = {
+    'claude-commands': { updatedAt: '2025-12-02T14:45:00', hasNew: false },
+    'custom-skills': { updatedAt: '2025-12-02T14:45:00', hasNew: true },
+    // Add entry for each sheet...
+};
+
 const sheets = {
     'claude-commands': `
         <div class="sheet">
@@ -482,10 +552,21 @@ const sheets = {
 
     'custom-skills': `
         <div class="sheet">
-            <h1>Custom Skills <span class="tag tag-custom">User</span></h1>
+            <h1>Custom Skills <span class="tag tag-custom">User</span> <span class="sheet-timestamp">Updated: Dec 2, 2025</span></h1>
             <p class="description">Your personal skills in ~/.claude/skills/</p>
 
-            <!-- Populate from user's actual skills -->
+            <h2>Example Category</h2>
+            <div class="command-grid">
+                <div class="command-card">
+                    <div class="command-name">/new-skill <span class="tag tag-new">New</span></div>
+                    <div class="command-desc">A newly added skill since last generation</div>
+                </div>
+                <div class="command-card">
+                    <div class="command-name">/existing-skill</div>
+                    <div class="command-desc">An existing skill (no New tag)</div>
+                </div>
+            </div>
+
             <div class="note">
                 <strong>Skill Location:</strong> ~/.claude/skills/&lt;skill-name&gt;/SKILL.md
             </div>
@@ -508,8 +589,23 @@ function loadSheet(sheetId) {
     localStorage.setItem('lastSheet', sheetId);
 }
 
+// Format date for display
+function formatDate(isoString) {
+    const date = new Date(isoString);
+    return date.toLocaleDateString('en-US', {
+        month: 'short', day: 'numeric', year: 'numeric',
+        hour: 'numeric', minute: '2-digit'
+    });
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
+    // Set global timestamp in footer
+    const timestampEl = document.getElementById('global-timestamp');
+    if (timestampEl) {
+        timestampEl.textContent = `Last updated: ${formatDate(generatedAt)}`;
+    }
+
     // Load last viewed or default
     const lastSheet = localStorage.getItem('lastSheet') || 'claude-commands';
     loadSheet(lastSheet);
