@@ -74,18 +74,20 @@ The skill automatically discovers:
 | MCP Servers | `claude mcp list` |
 | Custom Skills | `ls ~/.claude/skills/` |
 | Slash Commands | `ls ~/.claude/commands/` |
+| Custom Agents | `ls ~/.claude/agents/` |
 | Installed Plugins | `ls ~/.claude/plugins/marketplaces/` |
 
 ### Using Your Cheatsheet
 
-After generation:
+After generation, open the cheatsheet in your browser:
 
 ```bash
-# Open directly in browser
-open ~/Dev/claude-code-cheaters/index.html
+# Open directly in browser (replace with your output location)
+open /path/to/your-cheaters/index.html
 
 # Or serve locally (for live editing)
-cd ~/Dev/claude-code-cheaters && python3 -m http.server 8888
+cd /path/to/your-cheaters && python3 -m http.server 8888
+# Then visit http://localhost:8888
 ```
 
 ### Keyboard Shortcuts
@@ -138,6 +140,7 @@ The generated cheatsheet is pure HTML/CSS/JS - no build tools required. Edit dir
 
 - `.tag-builtin` - Blue, for Claude built-in commands
 - `.tag-custom` - Purple, for user skills
+- `.tag-agent` - Pink, for custom subagents
 - `.tag-plugin` - Green, for plugin packs
 - `.tag-mcp` - Orange, for MCP servers
 
@@ -148,6 +151,7 @@ The generated cheatsheet includes:
 **Core Section**
 - Claude Commands (built-in commands, keyboard shortcuts)
 - Custom Skills (your ~/.claude/skills/)
+- Custom Agents (your ~/.claude/agents/) - grouped by domain
 
 **Plugin Packs Section**
 - One sheet per installed plugin with all commands/skills

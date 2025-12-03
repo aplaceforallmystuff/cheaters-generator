@@ -33,6 +33,9 @@ ls -la ~/.claude/skills/
 # Find custom slash commands
 ls -la ~/.claude/commands/
 
+# Find custom agents (subagents)
+ls -la ~/.claude/agents/
+
 # Check for plugin packs
 ls -la ~/.claude/plugins/marketplaces/
 ```
@@ -86,6 +89,7 @@ Create three files following the templates below.
             <li class="nav-section">Core</li>
             <li><a href="#" data-sheet="claude-commands" class="active">Claude Commands</a></li>
             <li><a href="#" data-sheet="custom-skills">Custom Skills</a></li>
+            <li><a href="#" data-sheet="custom-agents">Custom Agents</a></li>
 
             <!-- Add Plugin Packs section if user has any -->
             <li class="nav-section">Plugin Packs</li>
@@ -304,6 +308,7 @@ body {
 
 .tag-builtin { background: rgba(59, 130, 246, 0.2); color: var(--info); }
 .tag-custom { background: rgba(139, 92, 246, 0.2); color: var(--accent); }
+.tag-agent { background: rgba(236, 72, 153, 0.2); color: #ec4899; }
 .tag-plugin { background: rgba(34, 197, 94, 0.2); color: var(--success); }
 .tag-mcp { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
 .tag-new { background: var(--success); color: #000; font-weight: 600; }
@@ -461,6 +466,7 @@ const generatedAt = '2025-12-02T14:45:00';  // ISO format
 const sheetMeta = {
     'claude-commands': { updatedAt: '2025-12-02T14:45:00', hasNew: false },
     'custom-skills': { updatedAt: '2025-12-02T14:45:00', hasNew: true },
+    'custom-agents': { updatedAt: '2025-12-02T14:45:00', hasNew: false },
     // Add entry for each sheet...
 };
 
@@ -569,6 +575,34 @@ const sheets = {
 
             <div class="note">
                 <strong>Skill Location:</strong> ~/.claude/skills/&lt;skill-name&gt;/SKILL.md
+            </div>
+        </div>
+    `,
+
+    'custom-agents': `
+        <div class="sheet">
+            <h1>Custom Agents <span class="tag tag-agent">Subagent</span> <span class="sheet-timestamp">Updated: Dec 2, 2025</span></h1>
+            <p class="description">Specialized subagents in ~/.claude/agents/</p>
+
+            <h2>How Agents Work</h2>
+            <p>Agents are specialized Claude instances invoked via the Task tool. Each agent has:</p>
+            <ul>
+                <li><strong>Model</strong> - Haiku (fast/cheap) or Sonnet (reasoning)</li>
+                <li><strong>Tools</strong> - Specific tools the agent can use</li>
+                <li><strong>Workflow</strong> - Defined process for consistency</li>
+            </ul>
+
+            <h2>Example Agent</h2>
+            <div class="command-grid">
+                <div class="command-card">
+                    <div class="command-name">agent-name <span class="tag tag-new">New</span></div>
+                    <div class="command-desc">What this agent does</div>
+                    <div class="command-args">Model: sonnet | Trigger: "example phrase"</div>
+                </div>
+            </div>
+
+            <div class="note">
+                <strong>Agent Location:</strong> ~/.claude/agents/&lt;agent-name&gt;.md
             </div>
         </div>
     `
@@ -693,18 +727,70 @@ For each MCP server, check for demonstration phrases:
 cat ~/Dev/mcp-example/README.md | grep -A 20 "Example"
 ```
 
+### For Each Agent Sheet
+
+Read the agent file and extract:
+
+1. **Name** - From frontmatter `name` field
+2. **Description** - From frontmatter `description` field (includes trigger phrases)
+3. **Model** - From frontmatter `model` field (haiku/sonnet)
+4. **Tools** - From frontmatter `tools` field
+5. **Purpose** - Brief summary from description
+
+Example structure for agent cards:
+
+```javascript
+'custom-agents': `
+    <div class="sheet">
+        <h1>Custom Agents <span class="tag tag-agent">Subagent</span></h1>
+        <p class="description">Specialized subagents in ~/.claude/agents/</p>
+
+        <h2>Vault Organization</h2>
+        <div class="command-grid">
+            <div class="command-card">
+                <div class="command-name">inbox-processor</div>
+                <div class="command-desc">Process inbox items into PARA locations</div>
+                <div class="command-args">Model: haiku | Trigger: "process inbox", "weekly review"</div>
+            </div>
+            <div class="command-card">
+                <div class="command-name">daily-notes-curator</div>
+                <div class="command-desc">Fix daily note formatting and links</div>
+                <div class="command-args">Model: haiku | Trigger: "clean daily notes", "curate daily notes"</div>
+            </div>
+        </div>
+
+        <h2>Content & Newsletter</h2>
+        <div class="command-grid">
+            <div class="command-card">
+                <div class="command-name">newsletter-researcher</div>
+                <div class="command-desc">Deep Perplexity research for SoN topics</div>
+                <div class="command-args">Model: sonnet | Trigger: "research [topic] for newsletter"</div>
+            </div>
+        </div>
+    </div>
+`
+```
+
+Group agents by domain:
+- **Vault Organization** - inbox-processor, daily-notes-curator
+- **Content & Newsletter** - newsletter-researcher, newsletter-writer
+- **Consulting** - consulting-brief-generator
+- **Development** - mcp-publisher, mcp-debugger
+- **Orchestration** - workflow-coordinator
+
 ---
 
 ## Usage
 
-After generation, users can:
+After generation, users can open the cheatsheet in their browser:
 
 ```bash
-# Open directly in browser
-open ~/Dev/claude-code-cheaters/index.html
+# Open directly in browser (replace with your output location)
+open /path/to/your-cheaters/index.html
 
 # Or serve locally for live editing
-cd ~/Dev/claude-code-cheaters && python3 -m http.server 8888
+cd /path/to/your-cheaters && python3 -m http.server 8888
+# Then visit http://localhost:8888
 ```
 
 ## Keyboard Navigation

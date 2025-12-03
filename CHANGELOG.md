@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2025-12-03
+
+### Added
+
+- **Custom Agents support** - Now discovers and documents agents in `~/.claude/agents/`
+- Agent sheet template with domain groupings (Vault, Content, Consulting, Development, Orchestration)
+- `.tag-agent` CSS class (pink) for agent tags
+- Agent card structure with model type and trigger phrases
+
+### Fixed
+
+- README usage examples now use generic paths instead of personal filesystem references
+
 ## [1.0.0] - 2025-11-30
 
 ### Added
