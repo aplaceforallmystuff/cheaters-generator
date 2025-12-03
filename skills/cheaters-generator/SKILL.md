@@ -157,10 +157,12 @@ body {
     width: 240px;
     background: var(--bg-sidebar);
     border-right: 1px solid var(--border);
-    padding: 20px 0;
+    padding: 20px 0 0 0;
     position: fixed;
     height: 100vh;
-    overflow-y: auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .nav-header {
@@ -184,6 +186,8 @@ body {
 
 #nav {
     list-style: none;
+    flex: 1;
+    overflow-y: auto;
 }
 
 #nav li {
@@ -330,19 +334,8 @@ body {
     border-top: 1px solid var(--border);
     font-size: 0.75rem;
     color: var(--text-muted);
-    margin-top: auto;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    flex-shrink: 0;
     background: var(--bg-sidebar);
-}
-
-/* Adjust sidebar for footer */
-#sidebar {
-    display: flex;
-    flex-direction: column;
-    padding-bottom: 50px;
 }
 
 /* Per-sheet timestamp */

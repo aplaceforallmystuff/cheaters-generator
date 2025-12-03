@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Sidebar footer positioning - now uses proper flexbox layout instead of absolute positioning
+- Nav list scrolls independently while footer stays pinned at bottom
+
 ## [1.1.0] - 2025-12-03
 
 ### Added
