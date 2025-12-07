@@ -9,19 +9,70 @@ Create a personalized Claude Code cheatsheet system inspired by [Brett Terpstra'
 ## What This Skill Creates
 
 A local HTML-based quick-reference system with:
-- Dark theme interface with keyboard navigation
+- Dark/light theme interface with keyboard navigation
 - Sheets for Claude commands, custom skills, plugin packs, and MCP servers
 - LocalStorage persistence for last-viewed sheet
-- Comprehensive documentation pulled from your actual configuration
-- **Global timestamp** in footer showing last full regeneration
+- Search functionality across all commands
+- **Modular architecture** - each sheet in its own file for easy updates
 - **Per-sheet timestamps** showing when each sheet was last updated
 - **"New" badges** highlighting items added since previous generation
 
+## Architecture
+
+```
+~/Dev/claude-code-cheaters/     # Or your preferred location
+├── index.html              # Main HTML with navigation
+├── stylesheets/
+│   └── main.css            # Dark/light theme CSS
+├── javascripts/
+│   └── main.js             # Auto-generated from sheets/
+└── sheets/                 # Individual sheet files
+    ├── claude-commands.html
+    ├── custom-skills.html
+    ├── custom-agents.html
+    ├── [plugin-name].html      # One per installed plugin
+    ├── mcp-[server-name].html  # One per MCP server
+    └── ...
+```
+
+### Sheet File Format
+
+Each sheet is a standalone HTML file with metadata:
+
+```html
+<!-- meta: {"updatedAt": "2025-12-07T10:00:00", "hasNew": true} -->
+<div class="sheet">
+    <h1>Sheet Title <span class="tag tag-mcp">MCP</span></h1>
+    <p class="description">Brief description</p>
+
+    <h2>Section</h2>
+    <div class="command-grid">
+        <div class="command-card">
+            <div class="command-name">command_name</div>
+            <div class="command-desc">What it does</div>
+            <div class="command-args">param: type</div>
+        </div>
+    </div>
+</div>
+```
+
+### Build Process
+
+After editing sheet files, run the build script:
+
+```bash
+node ~/Dev/cheaters-generator/scripts/build.js
+```
+
+This compiles all `sheets/*.html` into `javascripts/main.js`.
+
 ## Workflow
 
-### 1. Gather Information
+### Initial Generation
 
-First, collect the user's Claude Code configuration:
+For first-time setup:
+
+#### 1. Gather Information
 
 ```bash
 # List installed MCP servers
@@ -33,38 +84,74 @@ ls -la ~/.claude/skills/
 # Find custom slash commands
 ls -la ~/.claude/commands/
 
-# Find custom agents (subagents)
+# Find custom agents
 ls -la ~/.claude/agents/
 
 # Check for plugin packs
 ls -la ~/.claude/plugins/marketplaces/
 ```
 
-### 2. Check Previous Generation (for "New" tracking)
-
-Before regenerating, capture existing items to compare:
-
-```javascript
-// Read existing main.js and extract item names per sheet
-// Store in previousItems = { 'sheet-id': ['item1', 'item2', ...], ... }
-// New items = current items not in previousItems[sheet]
-```
-
-If no previous generation exists, skip "New" tracking for first run.
-
-### 3. Create Directory Structure
-
-Ask user for preferred location (default: `~/Dev/claude-code-cheaters/`):
+#### 2. Create Directory Structure
 
 ```bash
-mkdir -p ~/Dev/claude-code-cheaters/{stylesheets,javascripts}
+mkdir -p ~/Dev/claude-code-cheaters/{stylesheets,javascripts,sheets}
 ```
 
-### 4. Generate Files
+#### 3. Generate Files
 
-Create three files following the templates below.
+Create:
+- `index.html` - Navigation structure
+- `stylesheets/main.css` - Theme styles
+- `sheets/*.html` - Individual sheet files
 
----
+#### 4. Build
+
+```bash
+node ~/Dev/cheaters-generator/scripts/build.js
+```
+
+### Updating Sheets (Sync)
+
+For incremental updates (use `/update-cheaters` or `cheaters-sync` skill):
+
+#### 1. Scan Current Configuration
+
+Read skills, agents, commands, MCP servers from:
+- `~/.claude/skills/`
+- `~/.claude/agents/`
+- `~/.claude/commands/`
+- `~/.claude.json` (MCP servers)
+
+#### 2. Read Target Sheet File
+
+Read the specific sheet file to update:
+```bash
+# Example: updating agents
+cat ~/Dev/claude-code-cheaters/sheets/custom-agents.html
+```
+
+Each sheet file is small (2-12 KB) - no token limit issues.
+
+#### 3. Update Sheet Content
+
+Edit the specific sheet file with changes:
+- Add new items with `class="command-card new"`
+- Update metadata comment: `<!-- meta: {"updatedAt": "...", "hasNew": true} -->`
+- Remove items that no longer exist
+
+#### 4. Rebuild
+
+```bash
+node ~/Dev/cheaters-generator/scripts/build.js
+```
+
+#### 5. Commit (local only)
+
+```bash
+cd ~/Dev/claude-code-cheaters
+git add -A
+git commit -m "chore: sync [description of changes]"
+```
 
 ## File Templates
 
@@ -84,6 +171,18 @@ Create three files following the templates below.
         <div class="nav-header">
             <h1>Claude Code</h1>
             <span class="subtitle">Quick Reference</span>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search commands..." autocomplete="off">
+                <div id="search-results" class="search-results"></div>
+            </div>
+            <div class="theme-toggle">
+                <button id="theme-light" title="Light theme">
+                    <span class="icon">&#9728;</span> Light
+                </button>
+                <button id="theme-dark" title="Dark theme">
+                    <span class="icon">&#9790;</span> Dark
+                </button>
+            </div>
         </div>
         <ul id="nav">
             <li class="nav-section">Core</li>
@@ -91,15 +190,13 @@ Create three files following the templates below.
             <li><a href="#" data-sheet="custom-skills">Custom Skills</a></li>
             <li><a href="#" data-sheet="custom-agents">Custom Agents</a></li>
 
-            <!-- Add Plugin Packs section if user has any -->
             <li class="nav-section">Plugin Packs</li>
             <!-- Add entries for each installed plugin -->
+            <li><a href="#" data-sheet="your-plugin">Your Plugin</a></li>
 
-            <!-- Add MCP Servers section -->
             <li class="nav-section">MCP Servers</li>
             <!-- Add entries for each MCP server -->
-            <!-- Add new-dot span for sheets with new items -->
-            <!-- Example: <li><a href="#" data-sheet="mcp-new">New Server <span class="new-dot"></span></a></li> -->
+            <li><a href="#" data-sheet="mcp-your-server">Your Server</a></li>
         </ul>
         <div class="nav-footer">
             <span id="global-timestamp"></span>
@@ -117,560 +214,17 @@ Create three files following the templates below.
 
 ### stylesheets/main.css
 
-```css
-/* Claude Code Cheatsheet - Dark Theme */
-
-:root {
-    --bg-dark: #1a1a2e;
-    --bg-sidebar: #16213e;
-    --bg-content: #0f0f1a;
-    --bg-card: #1a1a2e;
-    --text-primary: #e4e4e7;
-    --text-secondary: #a1a1aa;
-    --text-muted: #71717a;
-    --accent: #8b5cf6;
-    --accent-hover: #a78bfa;
-    --border: #27273a;
-    --code-bg: #0d0d14;
-    --success: #22c55e;
-    --warning: #f59e0b;
-    --info: #3b82f6;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
-    background: var(--bg-content);
-    color: var(--text-primary);
-    display: flex;
-    min-height: 100vh;
-    line-height: 1.6;
-}
-
-/* Sidebar */
-#sidebar {
-    width: 240px;
-    background: var(--bg-sidebar);
-    border-right: 1px solid var(--border);
-    padding: 20px 0 0 0;
-    position: fixed;
-    height: 100vh;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-}
-
-.nav-header {
-    padding: 0 20px 20px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 15px;
-}
-
-.nav-header h1 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--text-primary);
-}
-
-.nav-header .subtitle {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-#nav {
-    list-style: none;
-    flex: 1;
-    overflow-y: auto;
-}
-
-#nav li {
-    margin: 2px 0;
-}
-
-#nav .nav-section {
-    font-size: 0.7rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    padding: 15px 20px 5px;
-    margin-top: 10px;
-}
-
-#nav a {
-    display: block;
-    padding: 8px 20px;
-    color: var(--text-secondary);
-    text-decoration: none;
-    font-size: 0.875rem;
-    transition: all 0.15s ease;
-}
-
-#nav a:hover {
-    background: rgba(139, 92, 246, 0.1);
-    color: var(--text-primary);
-}
-
-#nav a.active {
-    background: rgba(139, 92, 246, 0.15);
-    color: var(--accent);
-    border-left: 2px solid var(--accent);
-}
-
-/* Main Content */
-#content {
-    flex: 1;
-    margin-left: 240px;
-    padding: 40px;
-    max-width: 1000px;
-}
-
-/* Sheet Styles */
-.sheet h1 {
-    font-size: 1.75rem;
-    font-weight: 600;
-    margin-bottom: 10px;
-    color: var(--text-primary);
-}
-
-.sheet .description {
-    color: var(--text-secondary);
-    margin-bottom: 30px;
-    font-size: 0.95rem;
-}
-
-.sheet h2 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--accent);
-    margin: 30px 0 15px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--border);
-}
-
-.sheet h3 {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin: 20px 0 10px;
-}
-
-/* Command/Tool Cards */
-.command-grid {
-    display: grid;
-    gap: 12px;
-}
-
-.command-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 15px;
-    transition: border-color 0.15s ease;
-}
-
-.command-card:hover {
-    border-color: var(--accent);
-}
-
-.command-name {
-    font-family: 'SF Mono', 'Fira Code', monospace;
-    font-size: 0.9rem;
-    color: var(--accent);
-    margin-bottom: 5px;
-}
-
-.command-desc {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-}
-
-.command-args {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    margin-top: 8px;
-    font-family: 'SF Mono', 'Fira Code', monospace;
-}
-
-/* Tags */
-.tag {
-    display: inline-block;
-    font-size: 0.65rem;
-    padding: 2px 6px;
-    border-radius: 4px;
-    margin-left: 8px;
-    font-weight: 500;
-    text-transform: uppercase;
-}
-
-.tag-builtin { background: rgba(59, 130, 246, 0.2); color: var(--info); }
-.tag-custom { background: rgba(139, 92, 246, 0.2); color: var(--accent); }
-.tag-agent { background: rgba(236, 72, 153, 0.2); color: #ec4899; }
-.tag-plugin { background: rgba(34, 197, 94, 0.2); color: var(--success); }
-.tag-mcp { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
-.tag-new { background: var(--success); color: #000; font-weight: 600; }
-
-/* New item indicator dot in sidebar */
-.new-dot {
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    background: var(--success);
-    border-radius: 50%;
-    margin-left: 6px;
-    vertical-align: middle;
-}
-
-/* Sidebar footer for global timestamp */
-.nav-footer {
-    padding: 12px 20px;
-    border-top: 1px solid var(--border);
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    flex-shrink: 0;
-    background: var(--bg-sidebar);
-}
-
-/* Per-sheet timestamp */
-.sheet-timestamp {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    font-weight: normal;
-}
-
-/* Code blocks */
-code {
-    font-family: 'SF Mono', 'Fira Code', monospace;
-    font-size: 0.85rem;
-    background: var(--code-bg);
-    padding: 2px 6px;
-    border-radius: 4px;
-    color: var(--accent-hover);
-}
-
-pre {
-    background: var(--code-bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 15px;
-    overflow-x: auto;
-    margin: 10px 0;
-}
-
-pre code {
-    background: none;
-    padding: 0;
-}
-
-/* Tables */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 15px 0;
-    font-size: 0.85rem;
-}
-
-th, td {
-    padding: 10px 12px;
-    text-align: left;
-    border-bottom: 1px solid var(--border);
-}
-
-th {
-    font-weight: 600;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    font-size: 0.7rem;
-    letter-spacing: 0.05em;
-}
-
-td:first-child {
-    font-family: 'SF Mono', 'Fira Code', monospace;
-    color: var(--accent);
-}
-
-/* Keyboard shortcuts */
-kbd {
-    display: inline-block;
-    padding: 3px 6px;
-    font-family: 'SF Mono', 'Fira Code', monospace;
-    font-size: 0.75rem;
-    background: var(--bg-sidebar);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    box-shadow: 0 1px 0 var(--border);
-}
-
-/* Notes/Tips */
-.note {
-    background: rgba(59, 130, 246, 0.1);
-    border-left: 3px solid var(--info);
-    padding: 12px 15px;
-    margin: 15px 0;
-    border-radius: 0 8px 8px 0;
-    font-size: 0.85rem;
-}
-
-.warning {
-    background: rgba(245, 158, 11, 0.1);
-    border-left: 3px solid var(--warning);
-    padding: 12px 15px;
-    margin: 15px 0;
-    border-radius: 0 8px 8px 0;
-    font-size: 0.85rem;
-}
-
-/* Scrollbar */
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: var(--bg-dark);
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--border);
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--text-muted);
-}
-```
-
-### javascripts/main.js
-
-```javascript
-// Claude Code Cheatsheet - Navigation & Content Loading
-
-// Global generation timestamp (set at generation time)
-const generatedAt = '2025-12-02T14:45:00';  // ISO format
-
-// Per-sheet metadata for timestamps and new item tracking
-const sheetMeta = {
-    'claude-commands': { updatedAt: '2025-12-02T14:45:00', hasNew: false },
-    'custom-skills': { updatedAt: '2025-12-02T14:45:00', hasNew: true },
-    'custom-agents': { updatedAt: '2025-12-02T14:45:00', hasNew: false },
-    // Add entry for each sheet...
-};
-
-const sheets = {
-    'claude-commands': `
-        <div class="sheet">
-            <h1>Claude Commands <span class="tag tag-builtin">Built-in</span></h1>
-            <p class="description">Core commands available in every Claude Code session</p>
-
-            <h2>Session Control</h2>
-            <div class="command-grid">
-                <div class="command-card">
-                    <div class="command-name">/help</div>
-                    <div class="command-desc">Show help and available commands</div>
-                </div>
-                <div class="command-card">
-                    <div class="command-name">/clear</div>
-                    <div class="command-desc">Clear conversation history and start fresh</div>
-                </div>
-                <div class="command-card">
-                    <div class="command-name">/compact</div>
-                    <div class="command-desc">Compact conversation to reduce context usage</div>
-                </div>
-                <div class="command-card">
-                    <div class="command-name">/quit</div>
-                    <div class="command-desc">Exit Claude Code</div>
-                </div>
-            </div>
-
-            <h2>Context & Memory</h2>
-            <div class="command-grid">
-                <div class="command-card">
-                    <div class="command-name">/memory</div>
-                    <div class="command-desc">View and manage persistent memory</div>
-                </div>
-                <div class="command-card">
-                    <div class="command-name">/context</div>
-                    <div class="command-desc">Show current context window usage</div>
-                </div>
-            </div>
-
-            <h2>Configuration</h2>
-            <div class="command-grid">
-                <div class="command-card">
-                    <div class="command-name">/config</div>
-                    <div class="command-desc">Open Claude Code settings</div>
-                </div>
-                <div class="command-card">
-                    <div class="command-name">/permissions</div>
-                    <div class="command-desc">View and manage tool permissions</div>
-                </div>
-                <div class="command-card">
-                    <div class="command-name">/allowed-tools</div>
-                    <div class="command-desc">List currently allowed tools</div>
-                </div>
-            </div>
-
-            <h2>MCP Servers</h2>
-            <div class="command-grid">
-                <div class="command-card">
-                    <div class="command-name">/mcp</div>
-                    <div class="command-desc">MCP server management</div>
-                </div>
-                <div class="command-card">
-                    <div class="command-name">claude mcp list</div>
-                    <div class="command-desc">List all configured MCP servers (terminal)</div>
-                </div>
-                <div class="command-card">
-                    <div class="command-name">claude mcp add &lt;name&gt;</div>
-                    <div class="command-desc">Add a new MCP server (terminal)</div>
-                </div>
-                <div class="command-card">
-                    <div class="command-name">claude mcp remove &lt;name&gt;</div>
-                    <div class="command-desc">Remove an MCP server (terminal)</div>
-                </div>
-            </div>
-
-            <h2>Keyboard Shortcuts</h2>
-            <table>
-                <tr><th>Shortcut</th><th>Action</th></tr>
-                <tr><td><kbd>Ctrl</kbd>+<kbd>C</kbd></td><td>Cancel current operation</td></tr>
-                <tr><td><kbd>Ctrl</kbd>+<kbd>D</kbd></td><td>Exit Claude Code</td></tr>
-                <tr><td><kbd>↑</kbd> / <kbd>↓</kbd></td><td>Navigate command history</td></tr>
-                <tr><td><kbd>Tab</kbd></td><td>Autocomplete commands</td></tr>
-                <tr><td><kbd>Esc</kbd></td><td>Cancel input / close prompt</td></tr>
-            </table>
-        </div>
-    `,
-
-    'custom-skills': `
-        <div class="sheet">
-            <h1>Custom Skills <span class="tag tag-custom">User</span> <span class="sheet-timestamp">Updated: Dec 2, 2025</span></h1>
-            <p class="description">Your personal skills in ~/.claude/skills/</p>
-
-            <h2>Example Category</h2>
-            <div class="command-grid">
-                <div class="command-card">
-                    <div class="command-name">/new-skill <span class="tag tag-new">New</span></div>
-                    <div class="command-desc">A newly added skill since last generation</div>
-                </div>
-                <div class="command-card">
-                    <div class="command-name">/existing-skill</div>
-                    <div class="command-desc">An existing skill (no New tag)</div>
-                </div>
-            </div>
-
-            <div class="note">
-                <strong>Skill Location:</strong> ~/.claude/skills/&lt;skill-name&gt;/SKILL.md
-            </div>
-        </div>
-    `,
-
-    'custom-agents': `
-        <div class="sheet">
-            <h1>Custom Agents <span class="tag tag-agent">Subagent</span> <span class="sheet-timestamp">Updated: Dec 2, 2025</span></h1>
-            <p class="description">Specialized subagents in ~/.claude/agents/</p>
-
-            <h2>How Agents Work</h2>
-            <p>Agents are specialized Claude instances invoked via the Task tool. Each agent has:</p>
-            <ul>
-                <li><strong>Model</strong> - Haiku (fast/cheap) or Sonnet (reasoning)</li>
-                <li><strong>Tools</strong> - Specific tools the agent can use</li>
-                <li><strong>Workflow</strong> - Defined process for consistency</li>
-            </ul>
-
-            <h2>Example Agent</h2>
-            <div class="command-grid">
-                <div class="command-card">
-                    <div class="command-name">agent-name <span class="tag tag-new">New</span></div>
-                    <div class="command-desc">What this agent does</div>
-                    <div class="command-args">Model: sonnet | Trigger: "example phrase"</div>
-                </div>
-            </div>
-
-            <div class="note">
-                <strong>Agent Location:</strong> ~/.claude/agents/&lt;agent-name&gt;.md
-            </div>
-        </div>
-    `
-
-    // Add more sheets for each MCP server and plugin
-};
-
-// Load sheet content
-function loadSheet(sheetId) {
-    const content = document.getElementById('content');
-    content.innerHTML = sheets[sheetId] || '<div class="sheet"><h1>Not Found</h1><p>Sheet not available.</p></div>';
-
-    // Update active nav
-    document.querySelectorAll('#nav a').forEach(a => a.classList.remove('active'));
-    document.querySelector(`[data-sheet="${sheetId}"]`)?.classList.add('active');
-
-    // Save to localStorage
-    localStorage.setItem('lastSheet', sheetId);
-}
-
-// Format date for display
-function formatDate(isoString) {
-    const date = new Date(isoString);
-    return date.toLocaleDateString('en-US', {
-        month: 'short', day: 'numeric', year: 'numeric',
-        hour: 'numeric', minute: '2-digit'
-    });
-}
-
-// Initialize
-document.addEventListener('DOMContentLoaded', () => {
-    // Set global timestamp in footer
-    const timestampEl = document.getElementById('global-timestamp');
-    if (timestampEl) {
-        timestampEl.textContent = `Last updated: ${formatDate(generatedAt)}`;
-    }
-
-    // Load last viewed or default
-    const lastSheet = localStorage.getItem('lastSheet') || 'claude-commands';
-    loadSheet(lastSheet);
-
-    // Navigation clicks
-    document.getElementById('nav').addEventListener('click', (e) => {
-        if (e.target.tagName === 'A') {
-            e.preventDefault();
-            const sheetId = e.target.dataset.sheet;
-            if (sheetId) {
-                loadSheet(sheetId);
-            }
-        }
-    });
-
-    // Keyboard navigation
-    document.addEventListener('keydown', (e) => {
-        const links = Array.from(document.querySelectorAll('#nav a[data-sheet]'));
-        const currentIndex = links.findIndex(a => a.classList.contains('active'));
-
-        if (e.key === 'ArrowDown' || e.key === 'j') {
-            e.preventDefault();
-            const nextIndex = (currentIndex + 1) % links.length;
-            loadSheet(links[nextIndex].dataset.sheet);
-        } else if (e.key === 'ArrowUp' || e.key === 'k') {
-            e.preventDefault();
-            const prevIndex = (currentIndex - 1 + links.length) % links.length;
-            loadSheet(links[prevIndex].dataset.sheet);
-        }
-    });
-});
-```
-
----
-
-## Sheet Content Guidelines
-
-### For Each MCP Server Sheet
+See full CSS in the generated output. Key features:
+- CSS variables for theming
+- Dark mode default, light mode via `data-theme="light"`
+- Card-based layout for commands
+- Tag styling (builtin, custom, agent, plugin, mcp, new)
+- Search results dropdown
+- Responsive sidebar
+
+### Sheet Content Guidelines
+
+#### For MCP Server Sheets
 
 Include these sections:
 
@@ -679,114 +233,29 @@ Include these sections:
 3. **Parameters** - Document required and optional params
 4. **Notes** - Requirements, limitations, tips
 
-Example structure:
+#### For Agent Sheets
 
-```javascript
-'mcp-example': `
-    <div class="sheet">
-        <h1>Example MCP <span class="tag tag-mcp">MCP</span></h1>
-        <p class="description">Brief description of what this MCP does</p>
-
-        <h2>Example Prompts</h2>
-        <div class="command-grid">
-            <div class="command-card">
-                <div class="command-name">"Natural language query"</div>
-                <div class="command-desc">What it does</div>
-            </div>
-        </div>
-
-        <h2>Category Name</h2>
-        <div class="command-grid">
-            <div class="command-card">
-                <div class="command-name">tool_name</div>
-                <div class="command-desc">What the tool does</div>
-                <div class="command-args">param: type (description)</div>
-            </div>
-        </div>
-
-        <div class="note">
-            <strong>Note:</strong> Important information about this MCP.
-        </div>
-    </div>
-`
-```
-
-### Pull README Content
-
-For each MCP server, check for demonstration phrases:
-
-```bash
-# If MCP has local source
-cat ~/Dev/mcp-example/README.md | grep -A 20 "Example"
-```
-
-### For Each Agent Sheet
-
-Read the agent file and extract:
-
-1. **Name** - From frontmatter `name` field
-2. **Description** - From frontmatter `description` field (includes trigger phrases)
-3. **Model** - From frontmatter `model` field (haiku/sonnet)
-4. **Tools** - From frontmatter `tools` field
-5. **Purpose** - Brief summary from description
-
-Example structure for agent cards:
-
-```javascript
-'custom-agents': `
-    <div class="sheet">
-        <h1>Custom Agents <span class="tag tag-agent">Subagent</span></h1>
-        <p class="description">Specialized subagents in ~/.claude/agents/</p>
-
-        <h2>Vault Organization</h2>
-        <div class="command-grid">
-            <div class="command-card">
-                <div class="command-name">inbox-processor</div>
-                <div class="command-desc">Process inbox items into PARA locations</div>
-                <div class="command-args">Model: haiku | Trigger: "process inbox", "weekly review"</div>
-            </div>
-            <div class="command-card">
-                <div class="command-name">daily-notes-curator</div>
-                <div class="command-desc">Fix daily note formatting and links</div>
-                <div class="command-args">Model: haiku | Trigger: "clean daily notes", "curate daily notes"</div>
-            </div>
-        </div>
-
-        <h2>Content & Newsletter</h2>
-        <div class="command-grid">
-            <div class="command-card">
-                <div class="command-name">newsletter-researcher</div>
-                <div class="command-desc">Deep Perplexity research for SoN topics</div>
-                <div class="command-args">Model: sonnet | Trigger: "research [topic] for newsletter"</div>
-            </div>
-        </div>
-    </div>
-`
-```
-
-Group agents by domain:
-- **Vault Organization** - inbox-processor, daily-notes-curator
-- **Content & Newsletter** - newsletter-researcher, newsletter-writer
-- **Consulting** - consulting-brief-generator
-- **Development** - mcp-publisher, mcp-debugger
-- **Orchestration** - workflow-coordinator
-
----
+Group agents by domain (examples):
+- **Orchestration** - agents that coordinate other agents
+- **Content** - content creation and publishing agents
+- **Development** - code review, publishing, debugging agents
+- **Research** - specialized research and analysis agents
+- **Automation** - task automation and workflow agents
 
 ## Usage
 
-After generation, users can open the cheatsheet in their browser:
+After generation, open in browser:
 
 ```bash
-# Open directly in browser (replace with your output location)
-open /path/to/your-cheaters/index.html
+open ~/Dev/claude-code-cheaters/index.html
 
-# Or serve locally for live editing
-cd /path/to/your-cheaters && python3 -m http.server 8888
-# Then visit http://localhost:8888
+# Or serve locally
+cd ~/Dev/claude-code-cheaters && python3 -m http.server 8888
 ```
 
 ## Keyboard Navigation
 
 - `↑` / `k` - Previous sheet
 - `↓` / `j` - Next sheet
+- `/` - Focus search
+- `Esc` - Close search

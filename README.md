@@ -114,13 +114,72 @@ cd /path/to/your-cheaters && python3 -m http.server 8888
 |---------|-------------|
 | `/generate-cheaters` | Generate a cheatsheet at specified location |
 
+## Modular Architecture
+
+The cheatsheet uses a **modular sheet architecture** for easy maintenance:
+
+```
+your-cheaters/
+├── index.html              # Main HTML with navigation
+├── stylesheets/
+│   └── main.css            # Themes and styling
+├── javascripts/
+│   └── main.js             # AUTO-GENERATED - do not edit directly
+└── sheets/                 # Individual sheet files (2-12 KB each)
+    ├── claude-commands.html
+    ├── custom-skills.html
+    ├── custom-agents.html
+    ├── mcp-*.html          # One per MCP server
+    └── ...
+```
+
+### Editing Sheets
+
+Edit individual files in `sheets/` - each is small and self-contained:
+
+```bash
+# Edit a specific sheet
+vim sheets/custom-agents.html
+```
+
+Each sheet has metadata at the top:
+```html
+<!-- meta: {"updatedAt": "2025-12-07T10:00:00", "hasNew": true} -->
+<div class="sheet">
+    ...
+</div>
+```
+
+### Build Process
+
+After editing sheets, rebuild `main.js`:
+
+```bash
+# From the cheaters-generator directory
+node scripts/build.js /path/to/your-cheaters
+
+# Or use the default output location
+node scripts/build.js
+```
+
+### Migration Script
+
+Upgrading from monolithic main.js to modular sheets:
+
+```bash
+node scripts/extract-sheets.js /path/to/your-cheaters
+```
+
+This extracts existing sheets into individual files.
+
 ## Customization
 
-The generated cheatsheet is pure HTML/CSS/JS - no build tools required. Edit directly:
+The generated cheatsheet is pure HTML/CSS/JS. Edit:
 
+- `sheets/*.html` - Individual sheet content (recommended)
 - `index.html` - Add/remove navigation items
 - `stylesheets/main.css` - Customize colors and layout
-- `javascripts/main.js` - Add new sheet content
+- `javascripts/main.js` - AUTO-GENERATED from sheets (don't edit directly)
 
 ### CSS Variables
 

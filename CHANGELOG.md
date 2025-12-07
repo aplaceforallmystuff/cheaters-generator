@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2025-12-07
+
+### Added
+
+- **Modular sheet architecture** - Individual sheet files in `sheets/` directory (2-12 KB each)
+- `scripts/build.js` - Compiles sheets into main.js
+- `scripts/extract-sheets.js` - Migration script from monolithic to modular format
+- Sheet metadata support via HTML comments (`<!-- meta: {"updatedAt": "...", "hasNew": true} -->`)
+- Command-line arguments for custom output paths
+
+### Changed
+
+- `main.js` is now auto-generated from sheets - do not edit directly
+- SKILL.md updated with new modular workflow
+- README updated with modular architecture documentation
+
 ### Fixed
 
 - Sidebar footer positioning - now uses proper flexbox layout instead of absolute positioning
