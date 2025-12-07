@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Seasonal mascot system** - Date-based image switching for holiday celebrations
+  - Christmas (Dec 1-25): `xita-christmas.png`
+  - New Year (Dec 26-Jan 1): `xita-newyear.png`
+  - Three Kings (Jan 2-6): `xita-threekings.png`
+  - Valentine's (Feb 10-14): `xita-valentine.png`
+  - Halloween (Oct 20-31): `xita-halloween.png`
+- `getCurrentSeason()` function with date detection logic
+- `setSeasonalMascot()` function with graceful fallback if images don't exist
+
 ## [1.2.0] - 2025-12-07
 
 ### Added
