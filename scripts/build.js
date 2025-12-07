@@ -141,6 +141,61 @@ function formatDate(isoString) {
     });
 }
 
+// Seasonal mascot configuration
+const seasonalMascots = {
+    default: 'xita-mascot.png',
+    christmas: 'xita-christmas.png',      // Dec 1-25
+    newyear: 'xita-newyear.png',          // Dec 26 - Jan 1
+    threekings: 'xita-threekings.png',    // Jan 2-6
+    valentine: 'xita-valentine.png',      // Feb 10-14
+    halloween: 'xita-halloween.png'       // Oct 20-31
+};
+
+// Determine current season based on date
+function getCurrentSeason() {
+    const now = new Date();
+    const month = now.getMonth() + 1; // 1-12
+    const day = now.getDate();
+
+    // Christmas: Dec 1-25
+    if (month === 12 && day >= 1 && day <= 25) return 'christmas';
+
+    // New Year: Dec 26 - Jan 1
+    if ((month === 12 && day >= 26) || (month === 1 && day === 1)) return 'newyear';
+
+    // Three Kings: Jan 2-6
+    if (month === 1 && day >= 2 && day <= 6) return 'threekings';
+
+    // Valentine: Feb 10-14
+    if (month === 2 && day >= 10 && day <= 14) return 'valentine';
+
+    // Halloween: Oct 20-31
+    if (month === 10 && day >= 20 && day <= 31) return 'halloween';
+
+    return 'default';
+}
+
+// Set the seasonal mascot image
+function setSeasonalMascot() {
+    const mascotImg = document.querySelector('.mascot');
+    if (!mascotImg) return;
+
+    const season = getCurrentSeason();
+    const mascotFile = seasonalMascots[season] || seasonalMascots.default;
+
+    // Only change if seasonal image exists (graceful fallback)
+    const testImg = new Image();
+    testImg.onload = () => {
+        mascotImg.src = 'images/' + mascotFile;
+        mascotImg.title = season === 'default' ? 'Xita' : 'Xita (' + season + ' edition)';
+    };
+    testImg.onerror = () => {
+        // Seasonal image doesn't exist, keep default
+        console.log('Seasonal mascot not found:', mascotFile);
+    };
+    testImg.src = 'images/' + mascotFile;
+}
+
 // Sheet content
 const sheets = {
 ${sheetsStr}
@@ -318,6 +373,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize search
     initSearch();
+
+    // Set seasonal mascot
+    setSeasonalMascot();
 
     // Keyboard navigation (when not in search)
     document.addEventListener('keydown', (e) => {
