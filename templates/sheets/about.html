@@ -1,0 +1,85 @@
+<!-- meta: {"updatedAt": "2026-01-14T22:00:00.000Z", "hasNew": false} -->
+<div class="sheet">
+    <h1>About <span class="tag tag-builtin">Info</span></h1>
+    <p class="description">Claude Code Quick-Reference — Your personalized command reference</p>
+
+    <h2>What Is This?</h2>
+    <div class="command-grid">
+        <div class="command-card">
+            <div class="command-name">Quick Reference System</div>
+            <div class="command-desc">A local HTML-based reference for your Claude Code setup — skills, agents, commands, and MCP servers all in one searchable place.</div>
+            <div class="command-args">Inspired by Brett Terpstra's Cheaters</div>
+        </div>
+        <div class="command-card">
+            <div class="command-name">Auto-Discovery</div>
+            <div class="command-desc">Scans your actual ~/.claude/ configuration to build sheets tailored to YOUR setup, not generic documentation.</div>
+            <div class="command-args">Skills, agents, commands, MCP servers, plugins</div>
+        </div>
+    </div>
+
+    <h2>Keyboard Shortcuts</h2>
+    <table>
+        <tr><th>Key</th><th>Action</th></tr>
+        <tr><td><code>/</code></td><td>Focus search</td></tr>
+        <tr><td><code>Esc</code></td><td>Close search</td></tr>
+        <tr><td><code>↑</code> or <code>k</code></td><td>Previous sheet</td></tr>
+        <tr><td><code>↓</code> or <code>j</code></td><td>Next sheet</td></tr>
+        <tr><td><code>Enter</code></td><td>Select search result</td></tr>
+    </table>
+
+    <h2>How to Use</h2>
+    <div class="command-grid">
+        <div class="command-card">
+            <div class="command-name">/generate-quickref</div>
+            <div class="command-desc">Generate a new quick-reference from scratch. Scans your configuration and creates all sheets.</div>
+            <div class="command-args">/generate-quickref [optional: output directory]</div>
+        </div>
+        <div class="command-card">
+            <div class="command-name">/sync-quickref</div>
+            <div class="command-desc">Update an existing quick-reference with changes. Shows diff of added/removed/changed items.</div>
+            <div class="command-args">/sync-quickref [optional: quickref directory]</div>
+        </div>
+    </div>
+
+    <h2>Running Locally</h2>
+    <div class="note">
+        <strong>Option 1:</strong> Open <code>index.html</code> directly in your browser<br><br>
+        <strong>Option 2:</strong> Serve locally for development:<br>
+        <code>cd ~/Dev/claude-code-quickref && python3 -m http.server 8888</code><br>
+        Then visit <code>http://localhost:8888</code>
+    </div>
+
+    <h2>Rebuilding After Edits</h2>
+    <div class="note">
+        If you manually edit sheet files in <code>sheets/</code>, rebuild the main.js:<br><br>
+        <code>node scripts/build.js</code>
+    </div>
+
+    <h2>Credits</h2>
+    <div class="command-grid">
+        <div class="command-card">
+            <div class="command-name">claude-code-quickref</div>
+            <div class="command-desc">Created by Jim Christian. Licensed under MIT.</div>
+            <div class="command-args"><a href="https://github.com/aplaceforallmystuff/claude-code-quickref" target="_blank"><i class="fa-brands fa-github"></i> GitHub</a> · <a href="https://jimchristian.net" target="_blank"><i class="fa-solid fa-globe"></i> Website</a></div>
+        </div>
+        <div class="command-card">
+            <div class="command-name">Inspired By</div>
+            <div class="command-desc">Brett Terpstra's Cheaters — the original quick-reference cheatsheet system.</div>
+            <div class="command-args"><a href="https://github.com/ttscoff/cheaters" target="_blank"><i class="fa-brands fa-github"></i> ttscoff/cheaters</a></div>
+        </div>
+    </div>
+
+    <h2>Design System</h2>
+    <div class="command-grid">
+        <div class="command-card">
+            <div class="command-name">Modern CSS</div>
+            <div class="command-desc">oklch() color space, Inter + JetBrains Mono fonts, subtle shadows, smooth animations.</div>
+            <div class="command-args">Based on superdesign.dev principles</div>
+        </div>
+        <div class="command-card">
+            <div class="command-name">Dark & Light Themes</div>
+            <div class="command-desc">System preference detection with manual toggle. Your choice persists in localStorage.</div>
+            <div class="command-args">Click Light/Dark buttons in sidebar</div>
+        </div>
+    </div>
+</div>

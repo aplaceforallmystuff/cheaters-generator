@@ -371,6 +371,26 @@ body {
     border-top: 1px solid var(--border);
     font-size: 0.7rem;
     color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.footer-link {
+    color: var(--text-muted);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: color var(--transition-normal);
+}
+
+.footer-link:hover {
+    color: var(--accent);
+}
+
+.footer-link i {
+    font-size: 0.85rem;
 }
 
 /* Main Content */
