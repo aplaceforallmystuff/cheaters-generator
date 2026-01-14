@@ -1,27 +1,24 @@
-# Cheaters Generator
+# Claude Code Quick-Reference
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-Plugin-blue)](https://claude.ai/code)
 
-Generate personalized Claude Code cheatsheet systems inspired by [Brett Terpstra's Cheaters](https://github.com/ttscoff/cheaters).
+Generate personalized Claude Code quick-reference systems inspired by [Brett Terpstra's Cheaters](https://github.com/ttscoff/cheaters).
 
 ![Dark Mode](screenshots/dark-mode.png)
 
-## What It Does
+## Features
 
-Creates a local HTML-based quick-reference system customized to YOUR Claude Code setup:
-
+- **Modern design** with oklch() colors and smooth animations
 - **Dark & light themes** with system preference detection
-- **Global search** - Press `/` to search all commands across sheets
-- **Keyboard navigation** - j/k, arrows, Enter to select
-- **Sheets for everything** - Claude commands, custom skills, plugin packs, MCP servers
-- **Auto-discovery** - Scans your actual configuration to build relevant sheets
-- **Example prompts** - Pulls demonstration phrases from MCP server READMEs
-- **LocalStorage persistence** - Remembers your last-viewed sheet and theme
+- **Global search** — Press `/` to search all commands across sheets
+- **Keyboard navigation** — j/k, arrows, Enter to select
+- **Auto-discovery** — Scans your actual configuration
+- **Proper frontmatter parsing** — Extracts descriptions from skills, models from agents
+- **Diff-based sync** — See exactly what changed between updates
+- **LocalStorage persistence** — Remembers your last-viewed sheet and theme
 
 ![Light Mode](screenshots/light-mode.png)
-
-![Search](screenshots/search.png)
 
 ## Installation
 
@@ -29,10 +26,10 @@ Creates a local HTML-based quick-reference system customized to YOUR Claude Code
 
 ```bash
 # Add the marketplace
-claude plugin marketplace add aplaceforallmystuff/cheaters-generator
+claude plugin marketplace add aplaceforallmystuff/claude-code-quickref
 
 # Install the plugin
-claude plugin install cheaters-generator
+claude plugin install claude-code-quickref
 ```
 
 Start a new Claude Code session to use the commands and skills.
@@ -41,8 +38,8 @@ Start a new Claude Code session to use the commands and skills.
 
 ```bash
 # Clone the repo
-git clone https://github.com/aplaceforallmystuff/cheaters-generator.git
-cd cheaters-generator
+git clone https://github.com/aplaceforallmystuff/claude-code-quickref.git
+cd claude-code-quickref
 
 # Install commands
 cp -r commands/* ~/.claude/commands/
@@ -53,41 +50,51 @@ cp -r skills/* ~/.claude/skills/
 
 ## Usage
 
-### Generate Your Cheatsheet
+### Generate Your Quick-Reference
 
 ```
-/generate-cheaters
+/generate-quickref
 ```
 
 Or with a custom location:
 
 ```
-/generate-cheaters ~/Documents/my-cheaters
+/generate-quickref ~/Documents/my-quickref
 ```
+
+### Sync Existing Quick-Reference
+
+Update your existing quickref with any changes to your configuration:
+
+```
+/sync-quickref
+```
+
+This will:
+- Scan current skills, agents, commands, MCP servers
+- Compare against existing sheets
+- Report a diff (Added / Removed / Changed)
+- Update only affected files
+- Rebuild main.js
 
 ### What Gets Scanned
 
-The skill automatically discovers:
+| Source | Location | Parsed Data |
+|--------|----------|-------------|
+| Skills | `~/.claude/skills/` | description, user-invocable (from SKILL.md) |
+| Agents | `~/.claude/agents/` | model, tools (from frontmatter) |
+| Commands | `~/.claude/commands/` | description (from frontmatter) |
+| MCP Servers | `~/.claude.json` | tools, configuration |
+| Plugins | `~/.claude/plugins/` | all commands/skills |
 
-| Source | Command |
-|--------|---------|
-| MCP Servers | `claude mcp list` |
-| Custom Skills | `ls ~/.claude/skills/` |
-| Slash Commands | `ls ~/.claude/commands/` |
-| Custom Agents | `ls ~/.claude/agents/` |
-| Installed Plugins | `ls ~/.claude/plugins/marketplaces/` |
-
-### Using Your Cheatsheet
-
-After generation, open the cheatsheet in your browser:
+### Using Your Quick-Reference
 
 ```bash
-# Open directly in browser (replace with your output location)
-open /path/to/your-cheaters/index.html
+# Open directly in browser
+open ~/Dev/claude-code-quickref/index.html
 
-# Or serve locally (for live editing)
-cd /path/to/your-cheaters && python3 -m http.server 8888
-# Then visit http://localhost:8888
+# Or serve locally
+cd ~/Dev/claude-code-quickref && python3 -m http.server 8888
 ```
 
 ### Keyboard Shortcuts
@@ -100,54 +107,71 @@ cd /path/to/your-cheaters && python3 -m http.server 8888
 | `Enter` | Select result |
 | `k` / `j` | Previous / next sheet |
 
-## What's Included
-
-### Skills
-
-| Skill | Description |
-|-------|-------------|
-| `cheaters-generator` | Main skill for generating personalized cheatsheets |
+## Commands & Skills
 
 ### Commands
 
 | Command | Description |
 |---------|-------------|
-| `/generate-cheaters` | Generate a cheatsheet at specified location |
+| `/generate-quickref [location]` | Full generation from scratch |
+| `/sync-quickref [location]` | Incremental update with diff reporting |
 
-## Modular Architecture
+### Skills
 
-The cheatsheet uses a **modular sheet architecture** for easy maintenance:
+| Skill | Description |
+|-------|-------------|
+| `quickref-generator` | Main skill for generating personalized quick-references |
+
+## Frontmatter Parsing
+
+### Skills (SKILL.md)
+
+```yaml
+---
+name: skill-name
+description: What this skill does
+user-invocable: true
+---
+```
+
+### Agents (.md files)
+
+```yaml
+---
+model: opus
+tools:
+  - Read
+  - Write
+---
+```
+
+The model field is displayed as "Model: Opus/Sonnet/Haiku" in the quick-reference.
+
+## Architecture
 
 ```
-your-cheaters/
+~/Dev/claude-code-quickref/
 ├── index.html              # Main HTML with navigation
 ├── stylesheets/
-│   └── main.css            # Themes and styling
+│   └── main.css            # Modern oklch() themes
 ├── javascripts/
-│   └── main.js             # AUTO-GENERATED - do not edit directly
-└── sheets/                 # Individual sheet files (2-12 KB each)
-    ├── claude-commands.html
-    ├── custom-skills.html
-    ├── custom-agents.html
-    ├── mcp-*.html          # One per MCP server
-    └── ...
+│   └── main.js             # AUTO-GENERATED from sheets/
+├── sheets/                 # Individual sheet files (2-12 KB each)
+│   ├── claude-commands.html
+│   ├── custom-skills.html
+│   ├── custom-agents.html
+│   ├── mcp-*.html          # One per MCP server
+│   └── ...
+└── images/
+    └── xita-mascot.png     # Optional mascot image
 ```
 
 ### Editing Sheets
 
-Edit individual files in `sheets/` - each is small and self-contained:
+Edit individual files in `sheets/` — each is small and self-contained:
 
 ```bash
-# Edit a specific sheet
 vim sheets/custom-agents.html
-```
-
-Each sheet has metadata at the top:
-```html
-<!-- meta: {"updatedAt": "2025-12-07T10:00:00", "hasNew": true} -->
-<div class="sheet">
-    ...
-</div>
 ```
 
 ### Build Process
@@ -155,71 +179,40 @@ Each sheet has metadata at the top:
 After editing sheets, rebuild `main.js`:
 
 ```bash
-# From the cheaters-generator directory
-node scripts/build.js /path/to/your-cheaters
-
-# Or use the default output location
 node scripts/build.js
 ```
 
-### Migration Script
+## Design System
 
-Upgrading from monolithic main.js to modular sheets:
+The generated CSS uses modern oklch() colors following superdesign principles:
 
-```bash
-node scripts/extract-sheets.js /path/to/your-cheaters
-```
-
-This extracts existing sheets into individual files.
-
-## Customization
-
-The generated cheatsheet is pure HTML/CSS/JS. Edit:
-
-- `sheets/*.html` - Individual sheet content (recommended)
-- `index.html` - Add/remove navigation items
-- `stylesheets/main.css` - Customize colors and layout
-- `javascripts/main.js` - AUTO-GENERATED from sheets (don't edit directly)
+- **Typography**: Inter for body, JetBrains Mono for code
+- **Colors**: oklch() color space for perceptual uniformity
+- **Shadows**: Subtle, multi-layer shadows
+- **Animation**: 150-400ms ease-out transitions
+- **Spacing**: 4px base unit (0.25rem)
 
 ### CSS Variables
 
 ```css
 :root {
-    --bg-dark: #1a1a2e;
-    --bg-sidebar: #16213e;
-    --bg-content: #0f0f1a;
-    --accent: #8b5cf6;      /* Purple accent */
-    --success: #22c55e;      /* Green for plugins */
-    --warning: #f59e0b;      /* Orange for MCP */
-    --info: #3b82f6;         /* Blue for built-in */
+  --bg-primary: oklch(0.13 0.02 265);
+  --accent: oklch(0.65 0.18 265);
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --radius-md: 0.625rem;
+  --transition-normal: 200ms ease-out;
 }
 ```
 
-### Tag Classes
+## CLI Mode
 
-- `.tag-builtin` - Blue, for Claude built-in commands
-- `.tag-custom` - Purple, for user skills
-- `.tag-agent` - Pink, for custom subagents
-- `.tag-plugin` - Green, for plugin packs
-- `.tag-mcp` - Orange, for MCP servers
+For users without Claude Code, the build script can be run directly:
 
-## Example Output
-
-The generated cheatsheet includes:
-
-**Core Section**
-- Claude Commands (built-in commands, keyboard shortcuts)
-- Custom Skills (your ~/.claude/skills/)
-- Custom Agents (your ~/.claude/agents/) - grouped by domain
-
-**Plugin Packs Section**
-- One sheet per installed plugin with all commands/skills
-
-**MCP Servers Section**
-- One sheet per MCP server with:
-  - Example prompts (natural language queries)
-  - Tools grouped by category
-  - Parameter documentation
+```bash
+cd ~/Dev/claude-code-quickref
+node scripts/build.js [output-dir]
+```
 
 ## Contributing
 
@@ -233,4 +226,4 @@ MIT
 
 ## Author
 
-Jim Christian - [hello@jimchristian.net](mailto:hello@jimchristian.net)
+Jim Christian — [hello@jimchristian.net](mailto:hello@jimchristian.net)

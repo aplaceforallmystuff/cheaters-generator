@@ -1,21 +1,23 @@
 {
-  "name": "cheaters-generator",
-  "description": "Generate personalized Claude Code cheatsheet systems inspired by Brett Terpstra's Cheaters",
-  "version": "1.0.0",
+  "name": "claude-code-quickref",
+  "description": "Generate personalized Claude Code quick-reference systems with auto-discovery of skills, agents, and MCP servers",
+  "version": "2.0.0",
   "author": {
     "name": "Jim Christian",
     "email": "hello@jimchristian.net"
   },
-  "homepage": "https://github.com/aplaceforallmystuff/cheaters-generator",
-  "repository": "https://github.com/aplaceforallmystuff/cheaters-generator",
+  "homepage": "https://github.com/aplaceforallmystuff/claude-code-quickref",
+  "repository": "https://github.com/aplaceforallmystuff/claude-code-quickref",
   "license": "MIT",
   "keywords": [
-    "cheatsheet",
     "quick-reference",
+    "cheatsheet",
     "documentation",
     "mcp-servers",
     "skills",
+    "agents",
     "commands",
-    "productivity"
+    "productivity",
+    "claude-code"
   ]
 }

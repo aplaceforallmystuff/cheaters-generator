@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Code Quick-Reference</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="stylesheets/main.css">
+</head>
+<body>
+    <nav id="sidebar">
+        <div class="nav-header">
+            <div class="brand">
+                <img src="images/xita-mascot.png" alt="Xita" class="mascot" onerror="this.style.display='none'">
+                <div class="brand-text">
+                    <h1>Claude Code</h1>
+                    <span class="subtitle">Quick Reference</span>
+                </div>
+            </div>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search commands... (/)" autocomplete="off">
+                <div id="search-results" class="search-results"></div>
+            </div>
+            <div class="theme-toggle">
+                <button id="theme-light" title="Light theme">
+                    <i class="fa-solid fa-sun"></i> Light
+                </button>
+                <button id="theme-dark" title="Dark theme">
+                    <i class="fa-solid fa-moon"></i> Dark
+                </button>
+            </div>
+        </div>
+        <ul id="nav">
+            <li class="nav-section">Core</li>
+            <li><a href="#" data-sheet="claude-commands" class="active">Claude Commands</a></li>
+            <li><a href="#" data-sheet="custom-skills">Custom Skills</a></li>
+            <li><a href="#" data-sheet="custom-agents">Custom Agents</a></li>
+
+            <!-- Plugin Packs - add entries for each installed plugin -->
+            <!-- <li class="nav-section">Plugin Packs</li> -->
+            <!-- <li><a href="#" data-sheet="your-plugin">Your Plugin</a></li> -->
+
+            <!-- MCP Servers - add entries for each MCP server -->
+            <!-- <li class="nav-section">MCP Servers</li> -->
+            <!-- <li><a href="#" data-sheet="mcp-your-server">Your Server</a></li> -->
+        </ul>
+        <div class="nav-footer">
+            <span id="global-timestamp"></span>
+        </div>
+    </nav>
+
+    <main id="content">
+        <!-- Content loaded dynamically from sheets -->
+    </main>
+
+    <script src="javascripts/main.js"></script>
+</body>
+</html>

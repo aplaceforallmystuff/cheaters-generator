@@ -1,0 +1,88 @@
+# Code Quality Rules - WYSIWID Pattern
+# Declarative rules for Claude pattern recognition
+
+name: Code Quality Standards
+version: 1.0.0
+
+typescript_rules:
+  - id: explicit-return-types
+    description: Functions should have explicit return types
+    applies_to: ["*.ts"]
+    exceptions:
+      - Arrow functions in callbacks
+      - Test files
+
+  - id: no-any
+    description: Avoid 'any' type - use 'unknown' or proper types
+    applies_to: ["*.ts"]
+    pattern: ": any"
+    suggestion: Use specific type or 'unknown' with type guards
+
+  - id: prefer-const
+    description: Use const for variables that aren't reassigned
+    applies_to: ["*.ts", "*.js"]
+
+  - id: error-handling
+    description: Async functions should have try/catch or .catch()
+    applies_to: ["*.ts", "*.js"]
+    check: async functions have error boundaries
+
+naming_conventions:
+  files:
+    - pattern: kebab-case
+      applies_to: ["*.ts", "*.js", "*.tsx", "*.jsx"]
+      examples:
+        valid: ["user-service.ts", "api-client.ts"]
+        invalid: ["UserService.ts", "apiClient.ts"]
+
+  variables:
+    - pattern: camelCase
+      applies_to: local variables, function parameters
+    - pattern: SCREAMING_SNAKE_CASE
+      applies_to: constants, environment variables
+    - pattern: PascalCase
+      applies_to: classes, types, interfaces, enums
+
+  functions:
+    - pattern: camelCase
+      prefix_conventions:
+        - "is/has/can" for boolean returns
+        - "get" for data retrieval
+        - "set" for data mutation
+        - "handle" for event handlers
+        - "on" for callbacks
+
+documentation:
+  - id: public-api-docs
+    description: Public functions and classes need JSDoc comments
+    applies_to: exported members
+    template: |
+      /**
+       * Brief description
+       * @param paramName - Parameter description
+       * @returns Return value description
+       * @throws Error conditions
+       */
+
+  - id: complex-logic-comments
+    description: Complex algorithms should have explanatory comments
+    threshold: cyclomatic complexity > 5
+
+testing:
+  - id: test-coverage
+    description: New code should have corresponding tests
+    minimum_coverage: 80%
+
+  - id: test-naming
+    description: Test names should describe behavior
+    pattern: "should {action} when {condition}"
+    examples:
+      valid: ["should return user when id exists", "should throw when input invalid"]
+      invalid: ["test1", "user test", "works"]
+
+  - id: no-skipped-tests
+    description: Remove .skip() before committing
+    forbidden_patterns:
+      - ".skip("
+      - "xit("
+      - "xdescribe("

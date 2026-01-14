@@ -12,3 +12,7 @@ node_modules/
 
 # Output
 *.log
+
+# Claude Code local files
+.claude/memory/
+.claude/settings.local.json

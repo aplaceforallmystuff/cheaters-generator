@@ -7,7 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-01-14
+
+### Changed
+
+- **BREAKING: Renamed from `cheaters-generator` to `claude-code-quickref`**
+  - Plugin name: `cheaters-generator` → `claude-code-quickref`
+  - Commands: `/generate-cheaters` → `/generate-quickref`
+  - Skills: `cheaters-generator` → `quickref-generator`
+  - Default output: `~/Dev/claude-code-cheaters/` → `~/Dev/claude-code-quickref/`
+
+- **Modern design system** following superdesign principles
+  - oklch() color space for perceptually uniform colors
+  - Inter font for body text, JetBrains Mono for code
+  - Subtle shadows (no heavy drop shadows)
+  - 150-400ms ease-out animations
+  - FontAwesome 6 for icons
+
 ### Added
+
+- **Frontmatter parsing** for skills and agents
+  - Skills: Extracts `description` and `user-invocable` from SKILL.md
+  - Agents: Extracts `model` field (opus/sonnet/haiku) and `tools` list
+  - Displays model as "Model: Opus" in quick-reference cards
+
+- **`/sync-quickref` command** for incremental updates
+  - Compares current config against existing sheets
+  - Reports diff: Added / Removed / Changed items
+  - Updates only affected files
+  - Preserves manual customizations
+
+- **Template files** in `templates/` directory
+  - `main.css` - Modern oklch() theme with animations
+  - `index.html` - Clean HTML structure with FontAwesome icons
+
+- **CLI mode** for non-Claude Code usage
+  - Run `node scripts/build.js [output-dir]` directly
 
 - **Seasonal mascot system** - Date-based image switching for holiday celebrations
   - Christmas (Dec 1-25): `xita-christmas.png`
@@ -15,8 +50,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Three Kings (Jan 2-6): `xita-threekings.png`
   - Valentine's (Feb 10-14): `xita-valentine.png`
   - Halloween (Oct 20-31): `xita-halloween.png`
-- `getCurrentSeason()` function with date detection logic
-- `setSeasonalMascot()` function with graceful fallback if images don't exist
 
 ## [1.2.0] - 2025-12-07
 
