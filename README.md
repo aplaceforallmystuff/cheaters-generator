@@ -91,10 +91,10 @@ This will:
 
 ```bash
 # Open directly in browser
-open ~/Dev/claude-code-quickref/index.html
+open path/to/quickref/index.html
 
 # Or serve locally
-cd ~/Dev/claude-code-quickref && python3 -m http.server 8888
+cd path/to/quickref && python3 -m http.server 8888
 ```
 
 ### Keyboard Shortcuts
@@ -150,7 +150,7 @@ The model field is displayed as "Model: Opus/Sonnet/Haiku" in the quick-referenc
 ## Architecture
 
 ```
-~/Dev/claude-code-quickref/
+your-quickref/
 ├── index.html              # Main HTML with navigation
 ├── stylesheets/
 │   └── main.css            # Modern oklch() themes
@@ -163,7 +163,7 @@ The model field is displayed as "Model: Opus/Sonnet/Haiku" in the quick-referenc
 │   ├── mcp-*.html          # One per MCP server
 │   └── ...
 └── images/
-    └── xita-mascot.png     # Optional mascot image
+    └── mascot.png          # Optional mascot image
 ```
 
 ### Editing Sheets
@@ -210,7 +210,7 @@ The generated CSS uses modern oklch() colors following superdesign principles:
 For users without Claude Code, the build script can be run directly:
 
 ```bash
-cd ~/Dev/claude-code-quickref
+cd path/to/quickref
 node scripts/build.js [output-dir]
 ```
 
