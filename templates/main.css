@@ -325,6 +325,13 @@ body {
     padding-top: 0;
 }
 
+.nav-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 12px 8px;
+    opacity: 0.5;
+}
+
 #nav a {
     display: flex;
     align-items: center;
