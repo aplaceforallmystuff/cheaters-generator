@@ -226,4 +226,4 @@ MIT
 
 ## Author
 
-Jim Christian — [hello@jimchristian.net](mailto:hello@jimchristian.net)
+Jim Christian — [jimchristian.net](https://jimchristian.net) · [hello@jimchristian.net](mailto:hello@jimchristian.net)
