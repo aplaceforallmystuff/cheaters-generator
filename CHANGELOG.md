@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-01-15
+
 ### Changed
 
 - **Unified commands/skills terminology** - Claude Code now uses "skills" for everything
@@ -14,6 +16,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Only scans `~/.claude/skills/*/SKILL.md` for user skills
   - Renamed "Claude Commands" sheet to "Built-in Commands" for clarity
   - Updated all documentation to reflect unified terminology
+
+### Added
+
+- **Watch It In Action** section in README with YouTube demo link
+- YouTube thumbnail for video demonstration
+
+### Fixed
+
+- Cleaned up repository assets (removed redundant hero.png)
+- Updated screenshots showing Built-in Commands sheet
 
 ## [2.0.0] - 2026-01-14
 
