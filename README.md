@@ -7,11 +7,9 @@
 
 Generate personalized Claude Code quick-reference systems inspired by [Brett Terpstra's Cheaters](https://github.com/ttscoff/cheaters).
 
-![Quick-Reference Banner](images/hero.png)
-
 ## Watch It In Action
 
-[![Watch the Demo](https://img.youtube.com/vi/6yZ_3Il0nzw/maxresdefault.jpg)](https://youtu.be/6yZ_3Il0nzw)
+[![Watch the Demo](images/youtube-thumbnail.jpg)](https://youtu.be/6yZ_3Il0nzw)
 
 *Click to watch: I Built a Cheat Sheet for My Claude Code Setup*
 
