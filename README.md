@@ -2,13 +2,30 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-Plugin-blue)](https://claude.ai/code)
-[![Watch the Demo](https://img.shields.io/badge/YouTube-Watch_Demo-red?logo=youtube)](https://www.youtube.com/watch?v=6yZ_3Il0nzw)
+
+*Stop asking Claude what tools you have. Build a cheat sheet instead.*
 
 Generate personalized Claude Code quick-reference systems inspired by [Brett Terpstra's Cheaters](https://github.com/ttscoff/cheaters).
 
-**[Watch the 2-minute demo →](https://www.youtube.com/watch?v=6yZ_3Il0nzw)**
+![Quick-Reference Banner](images/hero.png)
 
-![Dark Mode](screenshots/dark-mode.png)
+## Watch It In Action
+
+[![Watch the Demo](https://img.youtube.com/vi/6yZ_3Il0nzw/maxresdefault.jpg)](https://youtu.be/6yZ_3Il0nzw)
+
+*Click to watch: I Built a Cheat Sheet for My Claude Code Setup*
+
+## The Problem
+
+You've built dozens of skills, agents, and MCP servers in Claude Code, but you can't remember half of them.
+
+Sound familiar?
+- "Wait, did I already build a skill for that?"
+- "What was that agent called again?"
+- "Which MCP servers do I actually have configured?"
+- Running `/help` gets you built-in commands, not your custom tools
+
+This plugin solves that by generating a searchable, offline quick-reference of everything you've built.
 
 ## Features
 
@@ -21,7 +38,22 @@ Generate personalized Claude Code quick-reference systems inspired by [Brett Ter
 - **Diff-based sync** — See exactly what changed between updates
 - **LocalStorage persistence** — Remembers your last-viewed sheet and theme
 
+![Dark Mode](screenshots/dark-mode.png)
+
 ![Light Mode](screenshots/light-mode.png)
+
+## How It Works
+
+The plugin scans your Claude Code configuration and generates HTML sheets:
+
+| Source | Location | What Gets Extracted |
+|--------|----------|---------------------|
+| Skills | `~/.claude/skills/*/SKILL.md` | name, description, user-invocable |
+| Agents | `~/.claude/agents/*.md` | model, tools (from frontmatter) |
+| MCP Servers | `~/.claude.json` | tools, configuration |
+| Plugins | `~/.claude/plugins/` | all skills from installed plugins |
+
+The output is a standalone HTML file that works completely offline — no server needed.
 
 ## Installation
 
@@ -41,13 +73,10 @@ Start a new Claude Code session to use the commands and skills.
 
 ```bash
 # Clone the repo
-git clone https://github.com/aplaceforallmystuff/claude-code-quickref.git
-cd claude-code-quickref
+git clone https://github.com/aplaceforallmystuff/cheaters-generator.git
+cd cheaters-generator
 
-# Install commands
-cp -r commands/* ~/.claude/commands/
-
-# Install skills
+# Copy skills to your Claude Code directory
 cp -r skills/* ~/.claude/skills/
 ```
 
@@ -74,20 +103,11 @@ Update your existing quickref with any changes to your configuration:
 ```
 
 This will:
-- Scan current skills, agents, commands, MCP servers
-- Compare against existing sheets
-- Report a diff (Added / Removed / Changed)
-- Update only affected files
-- Rebuild main.js
-
-### What Gets Scanned
-
-| Source | Location | Parsed Data |
-|--------|----------|-------------|
-| Skills | `~/.claude/skills/*/SKILL.md` | description, user-invocable |
-| Agents | `~/.claude/agents/` | model, tools (from frontmatter) |
-| MCP Servers | `~/.claude.json` | tools, configuration |
-| Plugins | `~/.claude/plugins/` | all skills from installed plugins |
+1. Scan current skills, agents, commands, MCP servers
+2. Compare against existing sheets
+3. Report a diff (Added / Removed / Changed)
+4. Update only affected files
+5. Rebuild main.js
 
 ### Using Your Quick-Reference
 
@@ -95,7 +115,7 @@ This will:
 # Open directly in browser
 open path/to/quickref/index.html
 
-# Or serve locally
+# Or serve locally (optional)
 cd path/to/quickref && python3 -m http.server 8888
 ```
 
@@ -109,14 +129,48 @@ cd path/to/quickref && python3 -m http.server 8888
 | `Enter` | Select result |
 | `k` / `j` | Previous / next sheet |
 
-## Plugin Interface
+## Architecture
 
-| Skill | Description |
-|-------|-------------|
-| `/generate-quickref [location]` | Full generation from scratch |
-| `/sync-quickref [location]` | Incremental update with diff reporting |
+```
+your-quickref/
+├── index.html              # Main HTML with navigation
+├── stylesheets/
+│   └── main.css            # Modern oklch() themes
+├── javascripts/
+│   └── main.js             # AUTO-GENERATED from sheets/
+├── sheets/                 # Individual sheet files (2-12 KB each)
+│   ├── builtin-commands.html
+│   ├── custom-skills.html
+│   ├── custom-agents.html
+│   ├── mcp-*.html          # One per MCP server
+│   └── ...
+└── images/
+    └── mascot.png          # Optional mascot image
+```
 
-> **Note:** Claude Code unified "commands" and "skills" into a single concept. Both are invoked via `/skill-name`. The core implementation lives in the `quickref-generator` skill.
+### Editing Sheets
+
+Edit individual files in `sheets/` — each is small and self-contained:
+
+```bash
+vim sheets/custom-agents.html
+```
+
+After editing, rebuild `main.js`:
+
+```bash
+node scripts/build.js
+```
+
+## Design System
+
+The generated CSS uses modern oklch() colors following superdesign principles:
+
+- **Typography**: Inter for body, JetBrains Mono for code
+- **Colors**: oklch() color space for perceptual uniformity
+- **Shadows**: Subtle, multi-layer shadows
+- **Animation**: 150-400ms ease-out transitions
+- **Spacing**: 4px base unit (0.25rem)
 
 ## Frontmatter Parsing
 
@@ -143,83 +197,28 @@ tools:
 
 The model field is displayed as "Model: Opus/Sonnet/Haiku" in the quick-reference.
 
-## Architecture
+## Requirements
 
-```
-your-quickref/
-├── index.html              # Main HTML with navigation
-├── stylesheets/
-│   └── main.css            # Modern oklch() themes
-├── javascripts/
-│   └── main.js             # AUTO-GENERATED from sheets/
-├── sheets/                 # Individual sheet files (2-12 KB each)
-│   ├── claude-commands.html
-│   ├── custom-skills.html
-│   ├── custom-agents.html
-│   ├── mcp-*.html          # One per MCP server
-│   └── ...
-└── images/
-    └── mascot.png          # Optional mascot image
-```
-
-### Editing Sheets
-
-Edit individual files in `sheets/` — each is small and self-contained:
-
-```bash
-vim sheets/custom-agents.html
-```
-
-### Build Process
-
-After editing sheets, rebuild `main.js`:
-
-```bash
-node scripts/build.js
-```
-
-## Design System
-
-The generated CSS uses modern oklch() colors following superdesign principles:
-
-- **Typography**: Inter for body, JetBrains Mono for code
-- **Colors**: oklch() color space for perceptual uniformity
-- **Shadows**: Subtle, multi-layer shadows
-- **Animation**: 150-400ms ease-out transitions
-- **Spacing**: 4px base unit (0.25rem)
-
-### CSS Variables
-
-```css
-:root {
-  --bg-primary: oklch(0.13 0.02 265);
-  --accent: oklch(0.65 0.18 265);
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-  --radius-md: 0.625rem;
-  --transition-normal: 200ms ease-out;
-}
-```
-
-## CLI Mode
-
-For users without Claude Code, the build script can be run directly:
-
-```bash
-cd path/to/quickref
-node scripts/build.js [output-dir]
-```
+- Claude Code CLI installed
+- Node.js (for build script)
+- A browser (for viewing the quick-reference)
 
 ## Contributing
 
-1. Fork the repo
-2. Create a feature branch
-3. Submit a PR
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## License
 
-MIT
+[MIT](LICENSE)
 
 ## Author
 
-Jim Christian — [jimchristian.net](https://jimchristian.net) · [hello@jimchristian.net](mailto:hello@jimchristian.net)
+Jim Christian — [jimchristian.net](https://jimchristian.net)
+
+---
+
+### Related Projects
+
+- [Brett Terpstra's Cheaters](https://github.com/ttscoff/cheaters) — The original inspiration
+- [Claude Agent Borg](https://github.com/aplaceforallmystuff/claude-agent-borg) — Assimilate external Claude Code setups
+- [Minervia](https://github.com/aplaceforallmystuff/minervia) — Claude Code + Obsidian starter kit
