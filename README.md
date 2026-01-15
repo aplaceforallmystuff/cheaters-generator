@@ -2,8 +2,11 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-Plugin-blue)](https://claude.ai/code)
+[![Watch the Demo](https://img.shields.io/badge/YouTube-Watch_Demo-red?logo=youtube)](https://www.youtube.com/watch?v=6yZ_3Il0nzw)
 
 Generate personalized Claude Code quick-reference systems inspired by [Brett Terpstra's Cheaters](https://github.com/ttscoff/cheaters).
+
+**[Watch the 2-minute demo →](https://www.youtube.com/watch?v=6yZ_3Il0nzw)**
 
 ![Dark Mode](screenshots/dark-mode.png)
 
