@@ -81,11 +81,10 @@ This will:
 
 | Source | Location | Parsed Data |
 |--------|----------|-------------|
-| Skills | `~/.claude/skills/` | description, user-invocable (from SKILL.md) |
+| Skills | `~/.claude/skills/*/SKILL.md` | description, user-invocable |
 | Agents | `~/.claude/agents/` | model, tools (from frontmatter) |
-| Commands | `~/.claude/commands/` | description (from frontmatter) |
 | MCP Servers | `~/.claude.json` | tools, configuration |
-| Plugins | `~/.claude/plugins/` | all commands/skills |
+| Plugins | `~/.claude/plugins/` | all skills from installed plugins |
 
 ### Using Your Quick-Reference
 
@@ -107,20 +106,14 @@ cd path/to/quickref && python3 -m http.server 8888
 | `Enter` | Select result |
 | `k` / `j` | Previous / next sheet |
 
-## Commands & Skills
-
-### Commands
-
-| Command | Description |
-|---------|-------------|
-| `/generate-quickref [location]` | Full generation from scratch |
-| `/sync-quickref [location]` | Incremental update with diff reporting |
-
-### Skills
+## Plugin Interface
 
 | Skill | Description |
 |-------|-------------|
-| `quickref-generator` | Main skill for generating personalized quick-references |
+| `/generate-quickref [location]` | Full generation from scratch |
+| `/sync-quickref [location]` | Incremental update with diff reporting |
+
+> **Note:** Claude Code unified "commands" and "skills" into a single concept. Both are invoked via `/skill-name`. The core implementation lives in the `quickref-generator` skill.
 
 ## Frontmatter Parsing
 

@@ -27,7 +27,7 @@ A local HTML-based quick-reference system with:
 ├── javascripts/
 │   └── main.js             # Auto-generated from sheets/
 └── sheets/                 # Individual sheet files (2-12 KB each)
-    ├── claude-commands.html
+    ├── builtin-commands.html
     ├── custom-skills.html
     ├── custom-agents.html
     ├── [plugin-name].html      # One per installed plugin
@@ -142,7 +142,7 @@ node scripts/build.js
 
 For updates to existing quickref, use `/sync-quickref` which:
 
-1. Scans current configuration (skills, agents, commands, MCP servers)
+1. Scans current configuration (skills, agents, MCP servers, plugins)
 2. Compares against existing sheet files
 3. **Reports diff**: Added / Removed / Changed items
 4. Updates only changed sheets

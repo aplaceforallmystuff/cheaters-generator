@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Unified commands/skills terminology** - Claude Code now uses "skills" for everything
+  - Removed scanning of deprecated `~/.claude/commands/` directory
+  - Only scans `~/.claude/skills/*/SKILL.md` for user skills
+  - Renamed "Claude Commands" sheet to "Built-in Commands" for clarity
+  - Updated all documentation to reflect unified terminology
+
 ## [2.0.0] - 2026-01-14
 
 ### Changed

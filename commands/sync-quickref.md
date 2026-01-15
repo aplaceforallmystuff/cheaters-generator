@@ -11,10 +11,10 @@ Synchronize your existing Claude Code quick-reference with your current configur
 ## Process
 
 1. **Scan current configuration:**
-   - Skills from `~/.claude/skills/` (parse SKILL.md frontmatter)
+   - Skills from `~/.claude/skills/*/SKILL.md` (parse frontmatter)
    - Agents from `~/.claude/agents/` (parse model from frontmatter)
-   - Commands from `~/.claude/commands/`
    - MCP servers from `~/.claude.json`
+   - Plugins from `~/.claude/plugins/`
 
 2. **Compare against existing sheets** in the quickref location
 

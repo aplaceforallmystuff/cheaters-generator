@@ -25,7 +25,7 @@ const outputFile = path.join(outputDir, 'javascripts', 'main.js');
 // Sheet ordering for navigation
 const SHEET_ORDER = [
     // Core
-    { id: 'claude-commands', section: 'Core', label: 'Claude Commands' },
+    { id: 'builtin-commands', section: 'Core', label: 'Built-in Commands' },
     { id: 'custom-skills', section: 'Core', label: 'Custom Skills' },
     { id: 'custom-agents', section: 'Core', label: 'Custom Agents' },
     // Plugin Packs - detected dynamically
@@ -86,7 +86,7 @@ function buildNavStructure(sheetIds) {
     };
 
     for (const id of sheetIds) {
-        if (id === 'claude-commands' || id === 'custom-skills' || id === 'custom-agents') {
+        if (id === 'builtin-commands' || id === 'custom-skills' || id === 'custom-agents') {
             sections['Core'].push(id);
         } else if (id.startsWith('mcp-')) {
             sections['MCP Servers'].push(id);
@@ -349,7 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Load last viewed or default
-    const lastSheet = localStorage.getItem('lastSheet') || 'claude-commands';
+    const lastSheet = localStorage.getItem('lastSheet') || 'builtin-commands';
     loadSheet(lastSheet);
 
     // Initialize theme
