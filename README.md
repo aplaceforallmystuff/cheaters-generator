@@ -5,6 +5,8 @@
 
 *Stop asking Claude what tools you have. Build a cheat sheet instead.*
 
+![Architecture](docs/images/architecture-diagram.png)
+
 Generate personalized Claude Code quick-reference systems inspired by [Brett Terpstra's Cheaters](https://github.com/ttscoff/cheaters).
 
 ## Watch It In Action
